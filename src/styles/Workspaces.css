@@ -1,0 +1,12 @@
+body {
+  font-family: "Roboto";
+}
+
+.input-with-button {
+  display: flex;
+  gap: 1rem;
+}
+
+.list-wrapper {
+  width: 30%;
+}
