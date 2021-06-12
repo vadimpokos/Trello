@@ -1,7 +1,4 @@
-import React from "react";
 import { Workspace } from "./Workspace";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Iprops } from "../workspace.model";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -12,12 +9,18 @@ import HomeTwoToneIcon from "@material-ui/icons/HomeTwoTone";
 import AppsTwoToneIcon from "@material-ui/icons/AppsTwoTone";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import "fontsource-roboto";
-import "../styles/Workspaces.css";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Iprops } from "../workspace.model";
 import { FormDialog } from "./NewWorkspace";
 
-export const WorkspaceView: React.FC<Iprops> = ({
+export const WorkspacesView: React.FC<Iprops> = ({
   workspaceList,
+  input,
+  onChange,
+  onClick,
+  open,
+  handleClickOpen,
+  handleClose,
   onDelete,
 }) => {
   const renderWorkspace = () => {
@@ -75,7 +78,16 @@ export const WorkspaceView: React.FC<Iprops> = ({
         <Switch>
           <Route path="/" exact>
             {renderWorkspaceList()}
-            <FormDialog />
+            <FormDialog
+              input={input}
+              onClick={onClick}
+              onChange={onChange}
+              open={open}
+              handleClickOpen={handleClickOpen}
+              handleClose={handleClose}
+              workspaceList={workspaceList}
+              onDelete={onDelete}
+            />
           </Route>
           {renderWorkspace()}
         </Switch>

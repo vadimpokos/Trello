@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
-import { Workspace } from "./Workspace";
-import { Iworkspace, workspaceListType } from "../workspace.model";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Iworkspace, Iprops, workspaceListType } from "../workspace.model";
 import firebase from "../database";
+import { WorkspacesView } from "./WorkspacesView";
+
 import "fontsource-roboto";
 import "../styles/Workspaces.css";
-import { WorkspaceView } from "./WorkspacesView";
 
 export const WorkspaceContainer: React.FC = () => {
   const [workspaceList, setWorkspaceList] = React.useState<workspaceListType>(
@@ -115,8 +116,14 @@ export const WorkspaceContainer: React.FC = () => {
       {isLoading ? (
         "...Loading"
       ) : (
-        <WorkspaceView
+        <WorkspacesView
           workspaceList={workspaceList}
+          input={inputValue}
+          onChange={inputChange}
+          onClick={handleCreateWorkspace}
+          open={open}
+          handleClickOpen={handleClickOpen}
+          handleClose={handleClose}
           onDelete={handleDeleteWorkspace}
         />
       )}

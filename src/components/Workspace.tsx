@@ -1,11 +1,200 @@
-import React from 'react';
+import React, { useEffect } from "react";
+import firebase from "../database";
+import { WorkspaceView } from "./WorkspaceView";
 
 interface Iname {
-    name: string
+  name: string;
 }
 
-export const Workspace: React.FC<Iname> = ({name}) => {
-    return(
-        <div>{name}</div>
-    )
+export type ITaskBoards = {
+  id: number;
+  name: string;
+  description: string;
+  status: string;
+};
+
+type INewTask = {
+  id: number;
+  name: string;
+  description: string;
+  status: string;
+  Dashboard: string;
+};
+
+export interface ITasks {
+  taskBoards: ITaskBoards[];
+  create: React.MouseEventHandler<HTMLButtonElement>;
+  title: string;
+  description: string;
+  status: string;
+  handleTitle: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  handleDescription: React.ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  >;
+  handleStatus: (e: React.ChangeEvent<{ value: unknown }>) => void;
+  open: boolean;
+  handleOpen: () => void;
+  handleClose: () => void;
+  handleDelete: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  handleUpdate: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
+
+export const Workspace: React.FC<Iname> = ({ name }) => {
+  const [taskBoadrs, setTaskBoadrs] = React.useState<ITaskBoards[]>([]);
+  const [titleInput, setTitleInput] = React.useState<string>("");
+  const [descriptionInput, setDescriptionInput] = React.useState<string>("");
+  const [status, setStatus] = React.useState<string>("todo");
+  const [open, setOpen] = React.useState(false);
+  const [newTask, setNewTask] = React.useState<INewTask>({
+    id: 0,
+    name: "",
+    description: "",
+    status: "",
+    Dashboard: "",
+  });
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleCreateTask = () => {
+    if (titleInput && descriptionInput && status) {
+      let createdTask = {
+        id: new Date().getTime(),
+        name: titleInput,
+        description: descriptionInput,
+        status: status,
+      };
+      setTaskBoadrs((prev) => [...prev, createdTask]);
+      setNewTask({ ...createdTask, Dashboard: name });
+      handleClose();
+    }
+  };
+
+  const handleDeleteTask = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    deleteDocument(e.currentTarget.id);
+  };
+
+  const handleUpdateTask = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    updateData(e.currentTarget.id);
+    setTitleInput("");
+    setDescriptionInput("");
+  };
+
+  const handleTitle = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setTitleInput(e.target.value);
+  };
+
+  const handleDescription = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setDescriptionInput(e.target.value);
+  };
+
+  const handleStatus = (e: React.ChangeEvent<{ value: unknown }>) => {
+    setStatus(e.target.value as string);
+  };
+
+  const getData = async () => {
+    let db = firebase.firestore().collection("Taskboards").orderBy("id");
+    await db
+      .get()
+      .then((res) => {
+        let newState: ITaskBoards[] = [];
+        res.forEach((doc) => {
+          if (doc.data().Dashboard === name) {
+            newState.push({
+              id: doc.data().id,
+              name: doc.data().name,
+              description: doc.data().description,
+              status: doc.data().status,
+            });
+          }
+          setTaskBoadrs([...newState]);
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting cached document:", error);
+      });
+  };
+
+  const addData = () => {
+    firebase
+      .firestore()
+      .collection("Taskboards")
+      .doc(newTask.name)
+      .set(newTask)
+      .then(() => {
+        console.log("Document written");
+      })
+      .catch((error) => {
+        console.error("Error adding document: ", error);
+      });
+  };
+
+  const deleteDocument = async (docname: string) => {
+    await firebase
+      .firestore()
+      .collection("Taskboards")
+      .doc(docname)
+      .delete()
+      .then(() => {
+        console.log("Document successfully deleted!");
+      })
+      .catch((error) => {
+        console.error("Error removing document: ", error);
+      });
+    await getData();
+  };
+
+  const updateData = async (docname: string) => {
+    await firebase
+      .firestore()
+      .collection("Taskboards")
+      .doc(docname)
+      .update({ name: titleInput, description: descriptionInput });
+    await getData();
+  };
+
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (newTask.name !== "") {
+      addData();
+      setTitleInput("");
+      setDescriptionInput("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newTask]);
+
+  return (
+    <WorkspaceView
+      taskBoards={taskBoadrs}
+      title={titleInput}
+      description={descriptionInput}
+      status={status}
+      create={handleCreateTask}
+      handleTitle={handleTitle}
+      handleDescription={handleDescription}
+      handleStatus={handleStatus}
+      open={open}
+      handleOpen={handleClickOpen}
+      handleClose={handleClose}
+      handleDelete={handleDeleteTask}
+      handleUpdate={handleUpdateTask}
+    />
+  );
+};

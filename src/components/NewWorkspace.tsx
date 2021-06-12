@@ -18,16 +18,6 @@ export const FormDialog: React.FC<Iprops> = ({
   handleClickOpen,
   handleClose,
 }) => {
-  //   const [open, setOpen] = React.useState(false);
-
-  //   const handleClickOpen = () => {
-  //     setOpen(true);
-  //   };
-
-  //   const handleClose = () => {
-  //     setOpen(false);
-  //   };
-
   return (
     <div>
       <IconButton color="primary" aria-label="add" onClick={handleClickOpen}>
