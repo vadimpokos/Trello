@@ -37,6 +37,21 @@ export interface ITasks {
   handleClose: () => void;
   handleDelete: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   handleUpdate: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  openTask: boolean;
+  handleClickOpenTask: (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
+  handleCloseTask: () => void;
+  openMove: boolean;
+  handleClickOpenMove: (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
+  handleCloseMove: () => void;
+  handleMove: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  currentStatus: { status: string; id: string };
+  handleMoveUpdate: (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
 }
 
 export const Workspace: React.FC<Iname> = ({ name }) => {
@@ -52,6 +67,52 @@ export const Workspace: React.FC<Iname> = ({ name }) => {
     status: "",
     Dashboard: "",
   });
+  const [openTask, setOpenTask] = React.useState(false);
+  const [idToUpdate, setIdToUpdate] = React.useState("");
+  const [openMove, setOpenMove] = React.useState(false);
+  const [currentStatus, setCurrentStatus] = React.useState({
+    status: "",
+    id: "",
+  });
+
+  const handleClickOpenMove = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    let current = taskBoadrs.find((item) => item.id === +e.currentTarget.id);
+    if (current === undefined) {
+      current = { name: "", description: "", id: 0, status: "" };
+    }
+    setCurrentStatus({ status: current?.status, id: `${current.id}` });
+    setOpenMove(true);
+  };
+
+  const handleCloseMove = () => {
+    setOpenMove(false);
+  };
+
+  const handleMove = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    console.log(e.currentTarget.id);
+  };
+
+  const handleClickOpenTask = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    setOpenTask(true);
+    console.log(taskBoadrs.find((item) => item.id === +e.currentTarget.id));
+    let current = taskBoadrs.find((item) => item.id === +e.currentTarget.id);
+    if (current === undefined) {
+      current = { name: "", description: "", id: 0, status: "" };
+    }
+    setTitleInput(current.name);
+    setDescriptionInput(current.description);
+    setIdToUpdate(e.currentTarget.id);
+  };
+
+  const handleCloseTask = () => {
+    setOpenTask(false);
+    setTitleInput("");
+    setDescriptionInput("");
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -84,9 +145,17 @@ export const Workspace: React.FC<Iname> = ({ name }) => {
   const handleUpdateTask = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    updateData(e.currentTarget.id);
+    updateData(idToUpdate);
     setTitleInput("");
     setDescriptionInput("");
+    handleCloseTask();
+  };
+
+  const handleMoveUpdate = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    updateStatus(currentStatus.id, e.currentTarget.id);
+    handleCloseMove();
   };
 
   const handleTitle = (
@@ -129,11 +198,12 @@ export const Workspace: React.FC<Iname> = ({ name }) => {
   };
 
   const addData = () => {
-    firebase
+    let docref = firebase
       .firestore()
       .collection("Taskboards")
-      .doc(newTask.name)
-      .set(newTask)
+      .doc(`${newTask.id}`);
+    docref
+      .set({ ...newTask })
       .then(() => {
         console.log("Document written");
       })
@@ -158,11 +228,22 @@ export const Workspace: React.FC<Iname> = ({ name }) => {
   };
 
   const updateData = async (docname: string) => {
+    console.log(docname);
     await firebase
       .firestore()
       .collection("Taskboards")
       .doc(docname)
       .update({ name: titleInput, description: descriptionInput });
+    await getData();
+  };
+
+  const updateStatus = async (docname: string, status: string) => {
+    console.log(docname);
+    await firebase
+      .firestore()
+      .collection("Taskboards")
+      .doc(docname)
+      .update({ status: status });
     await getData();
   };
 
@@ -195,6 +276,15 @@ export const Workspace: React.FC<Iname> = ({ name }) => {
       handleClose={handleClose}
       handleDelete={handleDeleteTask}
       handleUpdate={handleUpdateTask}
+      openTask={openTask}
+      handleClickOpenTask={handleClickOpenTask}
+      handleCloseTask={handleCloseTask}
+      openMove={openMove}
+      handleClickOpenMove={handleClickOpenMove}
+      handleCloseMove={handleCloseMove}
+      handleMove={handleMove}
+      currentStatus={currentStatus}
+      handleMoveUpdate={handleMoveUpdate}
     />
   );
 };

@@ -6,60 +6,58 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
+import { ITaskBoards } from "./Workspace";
 
-interface INewTaskDialog {
-  create: React.MouseEventHandler<HTMLButtonElement>;
+interface ITaskDialog {
+  open: boolean;
+  handleClickOpen: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  handleClose: () => void;
   title: string;
   description: string;
-  status: string;
   handleTitle: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   handleDescription: React.ChangeEventHandler<
     HTMLInputElement | HTMLTextAreaElement
   >;
-  handleStatus: (e: React.ChangeEvent<{ value: unknown }>) => void;
-  open: boolean;
-  handleOpen: () => void;
-  handleClose: () => void;
-  handleDelete: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  currentTask: ITaskBoards;
   handleUpdate: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
-export const FormDialog: React.FC<INewTaskDialog> = ({
+export const Task: React.FC<ITaskDialog> = ({
+  open,
+  handleClickOpen,
+  handleClose,
   title,
   description,
-  status,
-  create,
   handleTitle,
   handleDescription,
-  handleStatus,
-  open,
-  handleOpen,
-  handleClose,
+  currentTask,
+  handleUpdate,
 }) => {
   return (
     <div>
-      <Button variant="outlined" color="primary" onClick={handleOpen}>
-        Open form dialog
+      <Button
+        variant="outlined"
+        color="primary"
+        onClick={handleClickOpen}
+        id={`${currentTask.id}`}
+      >
+        View
       </Button>
       <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Card</DialogTitle>
+        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Facere
-            labore dolores quod, dolorum perspiciatis expedita vitae iure quas
-            sit ab asperiores dignissimos cupiditate dolorem nam dolor et
-            doloribus, temporibus omnis?
+            To subscribe to this website, please enter your email address here.
+            We will send updates occasionally.
           </DialogContentText>
           <TextField
             autoFocus
             margin="dense"
-            id="name"
+            id="title"
             label="Title"
             type="text"
             fullWidth
@@ -67,32 +65,26 @@ export const FormDialog: React.FC<INewTaskDialog> = ({
             onChange={handleTitle}
           />
           <TextField
+            autoFocus
             margin="dense"
             id="description"
             label="Description"
             type="text"
-            multiline
             fullWidth
             value={description}
             onChange={handleDescription}
           />
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={status}
-            onChange={handleStatus}
-          >
-            <MenuItem value={"todo"}>To do</MenuItem>
-            <MenuItem value={"inprogress"}>In Progress</MenuItem>
-            <MenuItem value={"completed"}>Completed</MenuItem>
-          </Select>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={create} color="primary">
-            Create!
+          <Button
+            onClick={handleUpdate}
+            color="primary"
+            // id={`${currentTask.name}`}
+          >
+            Update
           </Button>
         </DialogActions>
       </Dialog>

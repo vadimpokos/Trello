@@ -6,17 +6,14 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
-import HomeTwoToneIcon from "@material-ui/icons/HomeTwoTone";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import AppsTwoToneIcon from "@material-ui/icons/AppsTwoTone";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
-import CardHeader from "@material-ui/core/CardHeader";
 import { FormDialog } from "./NewTask";
+import { Task } from "./Task";
+import { MoveTask } from "./MoveTask";
 
 export const WorkspaceView: React.FC<ITasks> = ({
   taskBoards,
@@ -32,6 +29,15 @@ export const WorkspaceView: React.FC<ITasks> = ({
   handleClose,
   handleDelete,
   handleUpdate,
+  openTask,
+  handleClickOpenTask,
+  handleCloseTask,
+  openMove,
+  handleClickOpenMove,
+  handleCloseMove,
+  handleMove,
+  currentStatus,
+  handleMoveUpdate,
 }) => {
   const renderTaskList = (status: string) => {
     return (
@@ -50,19 +56,30 @@ export const WorkspaceView: React.FC<ITasks> = ({
                   primary={item.name}
                   secondary={item.description}
                 />
-                <input value={title} onChange={handleTitle} />
-                <input value={description} onChange={handleDescription} />
-                <IconButton
-                  id={item.name}
-                  value="update"
-                  onClick={handleUpdate}
-                >
-                  <RefreshIcon />
-                </IconButton>
+                <MoveTask
+                  task={item}
+                  open={openMove}
+                  handleClickOpen={handleClickOpenMove}
+                  handleClose={handleCloseMove}
+                  handleMove={handleMove}
+                  currentStatus={currentStatus}
+                  handleMoveUpdate={handleMoveUpdate}
+                />
+                <Task
+                  open={openTask}
+                  handleClickOpen={handleClickOpenTask}
+                  handleClose={handleCloseTask}
+                  title={title}
+                  description={description}
+                  handleTitle={handleTitle}
+                  handleDescription={handleDescription}
+                  currentTask={item}
+                  handleUpdate={handleUpdate}
+                />
                 <ListItemSecondaryAction>
                   <IconButton
                     edge="end"
-                    id={item.name}
+                    id={`${item.id}`}
                     aria-label="delete"
                     onClick={handleDelete}
                   >
@@ -92,7 +109,6 @@ export const WorkspaceView: React.FC<ITasks> = ({
           <CardContent>{renderTaskList("completed")}</CardContent>
         </Card>
         <FormDialog
-          taskBoards={taskBoards}
           title={title}
           description={description}
           status={status}

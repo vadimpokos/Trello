@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Iworkspace, Iprops, workspaceListType } from "../workspace.model";
+import { Iworkspace, workspaceListType } from "../workspace.model";
 import firebase from "../database";
 import { WorkspacesView } from "./WorkspacesView";
 
