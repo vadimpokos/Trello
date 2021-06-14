@@ -1,8 +1,13 @@
 import React from "react";
-import { WorkspaceContainer } from "./components/WorkspacesContainer";
+import { AppProvider } from "./GlobalState";
+import { Router } from "./Router";
 
 const App: React.FC = () => {
-  return <WorkspaceContainer />;
+  return (
+    <AppProvider>
+      <Router />
+    </AppProvider>
+  );
 };
 
 export default App;

@@ -5,7 +5,8 @@ export interface Iworkspace {
 }
 export type workspaceListType = {
     id: number;
-    name: string
+    name: string;
+    uid: string
 }[]
 
 
@@ -17,5 +18,6 @@ export interface Iprops {
     workspaceList: workspaceListType;
     open: boolean;
     handleClickOpen: () => void;
-    handleClose: () => void
+    handleClose: () => void;
+    uid: string
 }

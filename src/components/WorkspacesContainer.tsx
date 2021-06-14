@@ -14,9 +14,11 @@ export const WorkspaceContainer: React.FC = () => {
   const [newWorkspace, setNewWorkspace] = React.useState<{
     id: number;
     name: string;
-  }>({ id: 0, name: "" });
+    uid: string;
+  }>({ id: 0, name: "", uid: "" });
   const [inputValue, setInputValue] = React.useState<Iworkspace["input"]>("");
   const [open, setOpen] = React.useState(false);
+  const [uid, setUid] = React.useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -36,9 +38,9 @@ export const WorkspaceContainer: React.FC = () => {
     if (inputValue) {
       setWorkspaceList((prev) => [
         ...prev,
-        { id: new Date().getTime(), name: inputValue },
+        { id: new Date().getTime(), name: inputValue, uid: uid },
       ]);
-      setNewWorkspace({ id: new Date().getTime(), name: inputValue });
+      setNewWorkspace({ id: new Date().getTime(), name: inputValue, uid: uid });
       handleClose();
     }
   };
@@ -59,13 +61,21 @@ export const WorkspaceContainer: React.FC = () => {
   }, [newWorkspace]);
 
   const getData = async () => {
-    let db = firebase.firestore().collection("Dashboards").orderBy("id");
+    let db = firebase
+      .firestore()
+      .collection("Dashboards")
+      // .where("uid", "==", uid)
+      .orderBy("id");
     await db
       .get()
       .then((res) => {
         let newState: workspaceListType = [];
         res.forEach((doc) => {
-          newState.push({ id: doc.data().id, name: doc.data().name });
+          newState.push({
+            id: doc.data().id,
+            name: doc.data().name,
+            uid: doc.data().uid,
+          });
         });
         setWorkspaceList([...newState]);
       })
@@ -106,6 +116,20 @@ export const WorkspaceContainer: React.FC = () => {
     getData();
   };
 
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      setUid(user.uid);
+      console.log(uid);
+      // ...
+    } else {
+      console.log("no user");
+      // User is signed out
+      // ...
+    }
+  });
+
   useEffect(() => {
     getData();
   }, []);
@@ -124,6 +148,7 @@ export const WorkspaceContainer: React.FC = () => {
           handleClickOpen={handleClickOpen}
           handleClose={handleClose}
           onDelete={handleDeleteWorkspace}
+          uid={uid}
         />
       )}
     </>
