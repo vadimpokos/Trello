@@ -4,6 +4,8 @@ import { WorkspaceView } from "./WorkspaceView";
 
 interface Iname {
   name: string;
+  id: string;
+  uid: string;
 }
 
 export type ITaskBoards = {
@@ -11,6 +13,7 @@ export type ITaskBoards = {
   name: string;
   description: string;
   status: string;
+  uid: string;
 };
 
 type INewTask = {
@@ -19,6 +22,7 @@ type INewTask = {
   description: string;
   status: string;
   Dashboard: string;
+  uid: string;
 };
 
 export interface ITasks {
@@ -52,9 +56,10 @@ export interface ITasks {
   handleMoveUpdate: (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
+  uid: string;
 }
 
-export const Workspace: React.FC<Iname> = ({ name }) => {
+export const Workspace: React.FC<Iname> = ({ name, id, uid }) => {
   const [taskBoadrs, setTaskBoadrs] = React.useState<ITaskBoards[]>([]);
   const [titleInput, setTitleInput] = React.useState<string>("");
   const [descriptionInput, setDescriptionInput] = React.useState<string>("");
@@ -66,6 +71,7 @@ export const Workspace: React.FC<Iname> = ({ name }) => {
     description: "",
     status: "",
     Dashboard: "",
+    uid: "",
   });
   const [openTask, setOpenTask] = React.useState(false);
   const [idToUpdate, setIdToUpdate] = React.useState("");
@@ -80,7 +86,7 @@ export const Workspace: React.FC<Iname> = ({ name }) => {
   ) => {
     let current = taskBoadrs.find((item) => item.id === +e.currentTarget.id);
     if (current === undefined) {
-      current = { name: "", description: "", id: 0, status: "" };
+      current = { name: "", description: "", id: 0, status: "", uid: "" };
     }
     setCurrentStatus({ status: current?.status, id: `${current.id}` });
     setOpenMove(true);
@@ -101,7 +107,7 @@ export const Workspace: React.FC<Iname> = ({ name }) => {
     console.log(taskBoadrs.find((item) => item.id === +e.currentTarget.id));
     let current = taskBoadrs.find((item) => item.id === +e.currentTarget.id);
     if (current === undefined) {
-      current = { name: "", description: "", id: 0, status: "" };
+      current = { name: "", description: "", id: 0, status: "", uid: "" };
     }
     setTitleInput(current.name);
     setDescriptionInput(current.description);
@@ -129,9 +135,10 @@ export const Workspace: React.FC<Iname> = ({ name }) => {
         name: titleInput,
         description: descriptionInput,
         status: status,
+        uid: uid,
       };
       setTaskBoadrs((prev) => [...prev, createdTask]);
-      setNewTask({ ...createdTask, Dashboard: name });
+      setNewTask({ ...createdTask, Dashboard: id });
       handleClose();
     }
   };
@@ -181,12 +188,14 @@ export const Workspace: React.FC<Iname> = ({ name }) => {
       .then((res) => {
         let newState: ITaskBoards[] = [];
         res.forEach((doc) => {
-          if (doc.data().Dashboard === name) {
+          console.log(doc.data().Dashboard, id);
+          if (doc.data().Dashboard === id) {
             newState.push({
               id: doc.data().id,
               name: doc.data().name,
               description: doc.data().description,
               status: doc.data().status,
+              uid: doc.data().uid,
             });
           }
           setTaskBoadrs([...newState]);
@@ -285,6 +294,7 @@ export const Workspace: React.FC<Iname> = ({ name }) => {
       handleMove={handleMove}
       currentStatus={currentStatus}
       handleMoveUpdate={handleMoveUpdate}
+      uid={uid}
     />
   );
 };

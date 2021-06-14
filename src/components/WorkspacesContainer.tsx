@@ -90,7 +90,7 @@ export const WorkspaceContainer: React.FC = () => {
     await firebase
       .firestore()
       .collection("Dashboards")
-      .doc(newWorkspace.name)
+      .doc(`${newWorkspace.id}`)
       .set(newWorkspace)
       .then(() => {
         console.log("Document written");

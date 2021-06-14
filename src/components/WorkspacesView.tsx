@@ -33,7 +33,7 @@ export const WorkspacesView: React.FC<Iprops> = ({
   const renderWorkspace = () => {
     return workspaceList.map(({ id, name }, index) => (
       <Route key={index} path={`/${name}`}>
-        <Workspace name={name} />
+        <Workspace name={name} id={`${id}`} uid={uid} />
       </Route>
     ));
   };
@@ -59,7 +59,7 @@ export const WorkspacesView: React.FC<Iprops> = ({
                   <ListItemSecondaryAction>
                     <IconButton
                       edge="end"
-                      id={item.name}
+                      id={`${item.id}`}
                       aria-label="delete"
                       onClick={onDelete}
                     >

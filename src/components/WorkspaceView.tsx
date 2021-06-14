@@ -38,12 +38,14 @@ export const WorkspaceView: React.FC<ITasks> = ({
   handleMove,
   currentStatus,
   handleMoveUpdate,
+  uid,
 }) => {
   const renderTaskList = (status: string) => {
     return (
       <List>
         {taskBoards
           .filter((item: ITaskBoards) => item.status === status)
+          .filter((item) => item.uid === uid)
           .map((item: ITaskBoards) => {
             return (
               <ListItem key={item.id}>
