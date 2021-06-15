@@ -48,11 +48,13 @@ export const Task: React.FC<ITaskDialog> = ({
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+        <DialogTitle id="form-dialog-title">{currentTask.name}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis,
+            cupiditate libero accusamus numquam quidem dolorum id harum
+            repudiandae incidunt, a tenetur velit veritatis ullam voluptatibus
+            in eligendi inventore nemo amet.
           </DialogContentText>
           <TextField
             autoFocus

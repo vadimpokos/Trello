@@ -49,11 +49,10 @@ export const MoveTask: React.FC<IMove> = ({
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+        <DialogTitle id="form-dialog-title">Move</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
+            Where you want to move this task?
           </DialogContentText>
           {STATUS_MAP.filter(
             (item) => item.status !== currentStatus.status
