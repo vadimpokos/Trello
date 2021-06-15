@@ -3,6 +3,7 @@ import { AppContext } from "./GlobalState";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import firebase from "./database";
+import "./styles/login.css";
 
 export const SignUp: React.FC = () => {
   const context = React.useContext(AppContext);
@@ -39,14 +40,16 @@ export const SignUp: React.FC = () => {
   };
 
   return (
-    <div>
-      Sign Up
-      <TextField onChange={handleEmail} label="Email" type="email" />
-      <TextField onChange={handlePassword} label="Password" type="password" />
-      <Button variant="outlined" color="primary" onClick={handleRegister}>
+    <div className="wrapper">
+      <div className="login">
         Sign Up
-      </Button>
-      {error ? <div>{error}</div> : null}
+        <TextField onChange={handleEmail} label="Email" type="email" />
+        <TextField onChange={handlePassword} label="Password" type="password" />
+        <Button variant="outlined" color="primary" onClick={handleRegister}>
+          Sign Up
+        </Button>
+        {error ? <div>{error}</div> : null}
+      </div>
     </div>
   );
 };
